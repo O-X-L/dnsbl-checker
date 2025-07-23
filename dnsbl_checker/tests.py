@@ -1,9 +1,9 @@
-import asyncio
 import threading
 
 import pytest
-from .checker import DNSBLChecker, DNSBLIpChecker, DNSBLDomainChecker
-from .providers import Provider
+from checker import DNSBLChecker, DNSBLIpChecker, DNSBLDomainChecker
+from providers import Provider
+
 
 # IP TESTS
 def test_checker():

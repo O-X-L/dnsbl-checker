@@ -18,7 +18,7 @@ import warnings
 
 import aiodns
 
-from .providers import Provider, BASE_PROVIDERS, BASE_DOMAIN_PROVIDERS, DNSBL_CATEGORY_ERROR
+from providers import Provider, BASE_PROVIDERS, BASE_DOMAIN_PROVIDERS, DNSBL_CATEGORY_ERROR
 
 if sys.platform == 'win32' and sys.version_info >= (3, 8):
     # fixes https://github.com/dmippolitov/pydnsbl/issues/12
@@ -46,6 +46,10 @@ class DNSBLResult:
         self.detected_by = {}
         self.categories = set()
         self.process_results()
+
+    @property
+    def detected(self) -> bool:
+        return self.blacklisted
 
     def process_results(self):
         """ Process results by providers """
