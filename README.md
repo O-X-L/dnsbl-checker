@@ -57,6 +57,7 @@ dnsbl-check --ip 134.209.173.54
 >   "categories": [
 >     "unknown"
 >   ],
+>   "general_errors": [],
 >   "count": {
 >     "detected": 2,
 >     "checked": 43,
@@ -78,7 +79,7 @@ with CheckIP() as checker:
 print(result)
 # <DNSBLResult: 134.209.173.54 [DETECTED] (2/43)>
 print(result.to_dict())
-# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blackholes.five-ten-sg.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'combined.rbl.msrbl.net', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.cyberlogic.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'images.rbl.msrbl.net', 'ips.backscatterer.org', 'ix.dnsbl.manitu.net', 'korea.services.net', 'matrix.spfbl.net', 'phishing.rbl.msrbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spam.rbl.msrbl.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.imp.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virbl.bit.nl', 'virus.rbl.msrbl.net', 'virus.rbl.jp', 'wormrbl.imp.ch', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
+# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'general_errors': [], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'combined.rbl.msrbl.net', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.cyberlogic.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'images.rbl.msrbl.net', 'ips.backscatterer.org', 'korea.services.net', 'matrix.spfbl.net', 'phishing.rbl.msrbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spam.rbl.msrbl.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.imp.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virbl.bit.nl', 'virus.rbl.msrbl.net', 'virus.rbl.jp', 'wormrbl.imp.ch', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
 print(result.to_json())
 # ... (to_dict but in pretty json)
 
@@ -110,14 +111,4 @@ print(result)
 
 Contributions are welcome (:
 
-If you have ideas on how to improve the project feel free to:
-* [report Issues](https://github.com/O-X-L/dnsbl-checker/issues)
-* [request Features](https://github.com/O-X-L/dnsbl-checker/issues)
-* [Discuss about the implementation](https://github.com/O-X-L/dnsbl-checker/discussions)
-* or contact us directly: [contact+dnsblcheck@oxl.at](mailto://contact+dnsblcheck@oxl.at)
-* [create Pull-Requests](https://github.com/O-X-L/dnsbl-checker/pulls) for
-  * improving and/or extending the Unit-Tests
-  * improving Performance
-  * fixing bugs
-
-But please do not post any generic AI-slop.. thanks.
+See: [Contribute](https://github.com/O-X-L/dnsbl-checker/blob/latest/Contribute.md)

@@ -1,23 +1,20 @@
+from os import environ
+
+DEBUG = 'DEV' in environ
 RAW_BASE_PROVIDERS = [
     'all.s5h.net',
-    'aspews.ext.sorbs.net',
     'b.barracudacentral.org',
     'bl.nordspam.com',
-    'blackholes.five-ten-sg.com',
     'blacklist.woody.ch',
-    # The provider zen.spamhaus.org is already being used. abuseat.org redirects to spamhaus.org
-    # Additionally, abuseat.org has the same behaviour as zen.spamhaus.org
-    # and we manage the new DNSBL_CATEGORY_ERROR in the zen.spamhaus.org Provider class
-    # 'cbl.abuseat.org',
+    'zen.spamhaus.org',
+    'xbl.spamhaus.org',
     'combined.abuse.ch',
     'combined.rbl.msrbl.net',
     'db.wpbl.info',
     'dnsbl.cyberlogic.net',
-    'dnsbl.sorbs.net',
     'drone.abuse.ch',
     'images.rbl.msrbl.net',
     'ips.backscatterer.org',
-    'ix.dnsbl.manitu.net',
     'korea.services.net',
     'matrix.spfbl.net',
     'phishing.rbl.msrbl.net',
@@ -30,10 +27,9 @@ RAW_BASE_PROVIDERS = [
     'relays.nether.net',
     'residential.block.transip.nl',
     'singular.ttk.pte.hu',
-    'spam.dnsbl.sorbs.net',
     'spam.rbl.msrbl.net',
     'spambot.bls.digibase.ca',
-    'spamlist.or.kr',
+    # 'spamlist.or.kr',
     'spamrbl.imp.ch',
     'spamsources.fabel.dk',
     'ubl.lashback.com',
@@ -42,11 +38,34 @@ RAW_BASE_PROVIDERS = [
     'virus.rbl.jp',
     'wormrbl.imp.ch',
     'z.mailspike.net',
+    'spam.spamrats.com',
+    'dyna.spamrats.com',
+    'noptr.spamrats.com',
+    'bl.spamcop.net',
+    'bl.blocklist.de',
+    'rbl.your-server.de',
+    'bl.0spam.org',
+    'rbl.0spam.org',
+    'dnsbl.abusix.net',
+    'spam.dnsbl.anonmails.de',
+    'dnsbl.calivent.com.pe',
+    'tor.dan.me.uk',
+    'dnsbl.dronebl.org',
+    'hostkarma.junkemailfilter.com',
+    'orvedb.aupads.org',
+    'dnsbl-1.uceprotect.net',
+    'dnsbl-2.uceprotect.net',
+    'dnsbl-3.uceprotect.net',
+    'duinv.aupads.org',
+    'spam.abuse.ch',
+    'ubl.unsubscore.com',
+    'rbl2.triumf.ca',
+    'dnsrbl.swinog.ch',
+    'dnsbl.spfbl.net',
 ]
 RAW_DOMAIN_PROVIDERS = [
     'uribl.spameatingmonkey.net',
     'multi.surbl.org',
-    'rhsbl.sorbs.net '
 ]
 DNSBL_CATEGORY_UNKNOWN = 'unknown'
 DNSBL_CATEGORY_SPAM = 'spam'
