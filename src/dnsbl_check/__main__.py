@@ -6,6 +6,7 @@ from json import dumps as json_dumps
 sys_path.append(os_path.dirname(os_path.abspath(__file__)))
 
 # pylint: disable=C0413
+from provider import Provider, BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
 from checker import CheckDomain, CheckIP
 
 
@@ -16,10 +17,14 @@ def main():
     g = parser.add_mutually_exclusive_group(required=True)
     g.add_argument('-i', '--ip', type=str, default=None, help='IP to check')
     g.add_argument('-d', '--domain', type=str, default=None, help='Domain to check')
-    parser.add_argument('-j', '--json', type=bool, default=False, help='Only output JSON')
+    parser.add_argument('-j', '--json', action='store_true', default=False, help='Only output JSON')
     parser.add_argument(
         '-s', '--skip-providers', type=str, default='',
         help='Comma-separated list of base-providers to skip',
+    )
+    parser.add_argument(
+        '-a', '--add-providers', type=str, default='',
+        help='Comma-separated list of additional DNS-BL provider-domains to query',
     )
     parser.add_argument(
         '--details', action='store_true', default=False,
@@ -28,19 +33,24 @@ def main():
     args = parser.parse_args()
 
     skip_providers = args.skip_providers.split(',')
+    add_providers = [Provider(p) for p in args.add_providers.split(',')]
 
     if args.ip is not None:
+        providers = BASE_PROVIDERS_IP + add_providers
+
         if not args.json:
             print(f'Checking IP {args.ip} ..')
 
-        with CheckIP(skip_providers=skip_providers) as checker:
+        with CheckIP(providers=providers, skip_providers=skip_providers, ) as checker:
             result = checker.check(args.ip)
 
     else:
+        providers = BASE_PROVIDERS_DOMAIN + add_providers
+
         if not args.json:
             print(f'Checking Domain {args.domain} ..')
 
-        with CheckDomain(skip_providers=skip_providers) as checker:
+        with CheckDomain(providers=providers, skip_providers=skip_providers) as checker:
             result = checker.check(args.domain)
 
     response = {

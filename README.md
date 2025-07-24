@@ -84,6 +84,9 @@ dnsbl-check --ip 134.209.173.54
 >     "failed": 2
 >   }
 > }
+
+# add or skip DNS-BL providers:
+dnsbl-check --ip=134.209.173.54 --add-providers dnsbl.risk.oxl.app,dnsbl.host-svc.com --skip-providers abuse.spfbl.net
 ```
 
 ----
@@ -110,17 +113,19 @@ with CheckDomain() as checker:
 
 print(result)
 # <DNSBLResult: maleware.com (0/2)>
-```
 
-#### Adding custom providers
-
-```python3
-from dnsbl_check import CheckIP
-from dnsbl_check.providers import BASE_PROVIDERS, Provider
-p = BASE_PROVIDERS + [Provider('dnsbl.oxl.app')]
-with CheckIP(providers=p) as checker:
+# add or skip DNS-BL providers
+from dnsbl_check.provider import Provider, BASE_PROVIDERS_IP
+providers = BASE_PROVIDERS_IP + [Provider('dnsbl.risk.oxl.app')]
+with CheckIP(providers=providers, skip_providers=['abuse.spfbl.net']) as checker:
     result = checker.check('134.209.173.54')
- 
+
+# add or skip DNS-BL providers
+from dnsbl_check.provider import Provider, BASE_PROVIDERS_IP
+providers = BASE_PROVIDERS_IP + [Provider('dnsbl.risk.oxl.app')]
+with CheckIP(providers=providers, skip_providers=['abuse.spfbl.net']) as checker:
+    result = checker.check('134.209.173.54')
+
 print(result)
 # <DNSBLResult: 134.209.173.54 [DETECTED] (3/44)>
 ```

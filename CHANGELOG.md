@@ -4,6 +4,7 @@
 
 ## Features
 - Added new base-lists
+- Ability to add additional providers in CLI
 
 ## Deprecations
 - Removed dead lists
