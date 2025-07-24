@@ -1,6 +1,9 @@
 from os import environ
 
 DEBUG = 'DEV' in environ
+
+# NOTE: some info about the providers can be found here:
+#   https://github.com/O-X-L/dnsbl-checker/blob/latest/Providers.md
 RAW_PROVIDERS_IP = [
     'all.s5h.net',
     'b.barracudacentral.org',
@@ -9,15 +12,10 @@ RAW_PROVIDERS_IP = [
     'zen.spamhaus.org',
     'xbl.spamhaus.org',
     'combined.abuse.ch',
-    'combined.rbl.msrbl.net',
-    'db.wpbl.info',
-    'dnsbl.cyberlogic.net',
     'drone.abuse.ch',
-    'images.rbl.msrbl.net',
     'ips.backscatterer.org',
     'korea.services.net',
     'matrix.spfbl.net',
-    'phishing.rbl.msrbl.net',
     'proxy.bl.gweep.ca',
     'proxy.block.transip.nl',
     'psbl.surriel.com',
@@ -27,20 +25,17 @@ RAW_PROVIDERS_IP = [
     'relays.nether.net',
     'residential.block.transip.nl',
     'singular.ttk.pte.hu',
-    'spam.rbl.msrbl.net',
     'spambot.bls.digibase.ca',
     # 'spamlist.or.kr',
-    'spamrbl.imp.ch',
+    'spamrbl.swinog.ch',
     'spamsources.fabel.dk',
     'ubl.lashback.com',
-    'virbl.bit.nl',
-    'virus.rbl.msrbl.net',
     'virus.rbl.jp',
-    'wormrbl.imp.ch',
     'z.mailspike.net',
     'spam.spamrats.com',
     'dyna.spamrats.com',
     'noptr.spamrats.com',
+    'auth.spamrats.com',
     'bl.spamcop.net',
     'bl.blocklist.de',
     'rbl.your-server.de',
@@ -63,10 +58,20 @@ RAW_PROVIDERS_IP = [
     'dnsrbl.swinog.ch',
     'dnsbl.spfbl.net',
     'dbl.spamhaus.org',
+    'backscatter.spameatingmonkey.net',
+    'bl.spameatingmonkey.net',
+    'freshzero.spameatingmonkey.net',
+    'fresh.spameatingmonkey.net',
+    'fresh10.spameatingmonkey.net',
+    'fresh15.spameatingmonkey.net',
+    'fresh30.spameatingmonkey.net',
+    'netbl.spameatingmonkey.net',
 ]
 RAW_PROVIDERS_DOMAIN = [
     'uribl.spameatingmonkey.net',
+    'urired.spameatingmonkey.net',
     'multi.surbl.org',
+    'uribl.swinog.ch',
 ]
 DNSBL_CATEGORY_UNKNOWN = 'unknown'
 DNSBL_CATEGORY_SPAM = 'spam'

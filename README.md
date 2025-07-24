@@ -20,6 +20,24 @@ If you are interested in [report-based reputation-systems => check out our Risk-
 
 ----
 
+## Scope
+
+* This script/library should act as a **simple tool** to query DNS-BL's for the user
+
+* **Response Validation**
+
+  Interpreting if the provider's response is 'valid' is **out-of-scope** for this tool. (*like checking for false-positives*)
+
+  This heavily depends on the user's context.
+
+  Thus, the user should make sure to only use DNS-BL providers that are useful/safe for them to use.
+
+  We have added some info about providers here: [Providers.md](https://github.com/O-X-L/dnsbl-checker/blob/latest/Providers.md)
+
+If you want us to add additional providers or have found that existing ones have quit - [open an Issue](https://github.com/O-X-L/dnsbl-checker/issues) or [contact us per e-mail](mailto://contact+dnsblcheck@oxl.at)
+
+----
+
 ## Installation
 
 `pip install dnsbl-check`
@@ -81,7 +99,7 @@ with CheckIP() as checker:
 print(result)
 # <DNSBLResult: 134.209.173.54 [DETECTED] (2/43)>
 print(result.to_dict())
-# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'general_errors': [], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'combined.rbl.msrbl.net', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.cyberlogic.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'images.rbl.msrbl.net', 'ips.backscatterer.org', 'korea.services.net', 'matrix.spfbl.net', 'phishing.rbl.msrbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spam.rbl.msrbl.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.imp.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virbl.bit.nl', 'virus.rbl.msrbl.net', 'virus.rbl.jp', 'wormrbl.imp.ch', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
+# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'general_errors': [], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'ips.backscatterer.org', 'korea.services.net', 'matrix.spfbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.swinog.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virus.rbl.jp', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
 print(result.to_json())
 # ... (to_dict but in pretty json)
 
