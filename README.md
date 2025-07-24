@@ -34,6 +34,10 @@ If you are interested in [report-based reputation-systems => check out our Risk-
 
   We have added some info about providers here: [Providers.md](https://github.com/O-X-L/dnsbl-checker/blob/latest/Providers.md)
 
+* Users that want to use DNS-BL lookups in commercial settings have to make sure to **read the usage policies of those providers**.
+
+  Some providers do not allow commercial usage in their free-tier.
+
 If you want us to add additional providers or have found that existing ones have quit - [open an Issue](https://github.com/O-X-L/dnsbl-checker/issues) or [contact us per e-mail](mailto://contact+dnsblcheck@oxl.at)
 
 ----
