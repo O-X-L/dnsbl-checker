@@ -42,5 +42,5 @@ jobs:
 
       - name: Running PyTest
         run: |
-          pylint --version
+          pytest --version
           pytest --cov

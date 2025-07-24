@@ -1,5 +1,8 @@
 # DNSBL Checker
 
+[![Lint](https://github.com/O-X-L/dnsbl-checker/actions/workflows/lint.yml/badge.svg?branch=latest)](https://github.com/O-X-L/dnsbl-checker/actions/workflows/lint.yml)
+[![Test](https://github.com/O-X-L/dnsbl-checker/actions/workflows/test.yml/badge.svg?branch=latest)](https://github.com/O-X-L/dnsbl-checker/actions/workflows/test.yml)
+
 This script/library can check if an IP or Domain is listed on DNS-BL's. 
 
 Please be aware that the providers of such public DNSBL mirrors discourage high-volume lookups. Do not abuse their services! You will run into rate-limits.
