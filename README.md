@@ -18,6 +18,8 @@ This started as a fork of [github.com/dmippolitov/pydnsbl](https://github.com/dm
 
 If you are interested in [report-based reputation-systems => check out our Risk-DB project](https://github.com/O-X-L/risk-db).
 
+Tip: If you want to run your own DNS-BL server - check out our [DNS-BL microservice](https://github.com/O-X-L/dnsbl-server).
+
 ----
 
 ## Scope
