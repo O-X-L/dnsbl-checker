@@ -26,7 +26,6 @@ class MockedDNSResolver:
 
     async def query(self, query: str, rtype: str = 'A') -> ares_query_a_result:
         del rtype
-        # todo: allow to return provider-based results
         if self._mock_responses is not None:
             for test_provider, test_response in self._mock_responses.items():
                 if query.endswith(test_provider):
