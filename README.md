@@ -42,6 +42,7 @@ options:
   -j JSON, --json JSON  Only output JSON
   -s SKIP_PROVIDERS, --skip-providers SKIP_PROVIDERS
                         Comma-separated list of base-providers to skip
+  --details             If the result details should be added to the output
 ```
 
 **Example:**
