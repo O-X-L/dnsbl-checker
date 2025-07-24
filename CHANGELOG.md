@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.1] - 2025-?
+
+## Deprecations
+- Removed `bulk_check` as high-volume lookups are discouraged by DNSBL-providers and users could simply use a loop instead
+
 ## [2.0.0] - 2025-07-24
 
 ## Features

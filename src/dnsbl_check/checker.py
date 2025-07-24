@@ -144,13 +144,6 @@ class BaseAsyncDNSBLChecker(abc.ABC):
         results = await asyncio.gather(*tasks, return_exceptions=True)
         return DNSBLResult(request=request, results=results)
 
-    async def bulk_check(self, requests: list[str]) -> list[DNSBLResult]:
-        results = []
-        for request in requests:
-            results.append(await self.check(request))
-
-        return results
-
 
 class AsyncCheckIP(BaseAsyncDNSBLChecker):
     def prepare_query(self, request):
@@ -205,17 +198,6 @@ class BaseDNSBLChecker:
         result = asyncio.run(self._check_async(request))
         self._raise_result_exception(result)
         return result
-
-    async def _bulk_check_async(self, request: list[str]) -> list[DNSBLResult]:
-        async with self._async_checker as checker:
-            return await checker.bulk_check(request)
-
-    def bulk_check(self, request: list[str]) -> list[DNSBLResult]:
-        results = asyncio.run(self._bulk_check_async(request))
-        for r in results:
-            self._raise_result_exception(r)
-
-        return results
 
 
 class CheckIP(BaseDNSBLChecker):
