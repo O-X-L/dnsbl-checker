@@ -91,7 +91,7 @@ with CheckDomain() as checker:
     result = checker.check('maleware.com')
 
 print(result)
-# <DNSBLResult: maleware.com (0/43)>
+# <DNSBLResult: maleware.com (0/2)>
 ```
 
 #### Adding custom providers
