@@ -38,6 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements_test.txt >/dev/null
+          pip install -r requirements_build.txt >/dev/null
           pip install -r requirements.txt >/dev/null
 
       - name: Running PyTest

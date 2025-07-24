@@ -29,6 +29,7 @@ If you have ideas on how to improve the project feel free to:
   pip install -r requirements.txt
   pip install -r requirements_lint.txt
   pip install -r requirements_test.txt
+  pip install -r requirements_build.txt
   ```
 
 * To try out your local changes you can easily execute the CLI: `python3 src/dnsbl_check --help`
