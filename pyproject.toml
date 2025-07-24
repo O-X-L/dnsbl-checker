@@ -14,7 +14,7 @@ keywords = ["dnsbl", "blocklists"]
 license = {file = "LICENSE.txt"}
 classifiers = [
     'Programming Language :: Python :: 3',
-    'License :: OSI Approved :: MIT',
+    'License :: OSI Approved :: MIT License',
 ]
 dynamic = ["dependencies", "version"]
 
