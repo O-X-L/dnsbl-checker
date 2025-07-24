@@ -1,87 +1,121 @@
-# Pydnsbl
-![pytest workflow](https://github.com/dmippolitov/pydnsbl/actions/workflows/python-app.yml/badge.svg)
+# DNSBL Checker
 
-Async [dnsbl](https://en.wikipedia.org/wiki/DNSBL) lists checker based
-on asyncio/aiodns. Checks if ip is listed in anti-spam dns blacklists.
-Multiple dns blacklists supported. Use aiodns for async dns requests.
-Usually ip check run for 50+ lists takes less than one second. Also allow to check domains.
+This script/library can check if an IP or Domain is listed on DNS-BL's. 
+
+Please be aware that the providers of such public DNSBL mirrors discourage high-volume lookups. Do not abuse their services! You will run into rate-limits.
+
+**Features**:
+* Asynchronous DNS requests
+* Multi-provider support
+* Ability to add custom providers
+* Check for 50+ lists usually takes a few seconds
+* Can also check domains
+
+This started as a fork of [github.com/dmippolitov/pydnsbl](https://github.com/dmippolitov/pydnsbl) - so thanks to the contributors ❤️
+
+If you are interested in [report-based reputation-systems => check out our Risk-DB project](https://github.com/O-X-L/risk-db).
+
+----
 
 ## Installation
 
-`pip install pydnsbl`
+`pip install dnsbl-check`
 
-## Requirements
-
-- python >= 3.6
-- aiodns
+----
 
 ## Usage
-### Check ip
-```
->>> import pydnsbl
->>> ip_checker = pydnsbl.DNSBLIpChecker()
->>> ip_checker.check('8.8.8.8')
-<DNSBLResult: 8.8.8.8  (0/52)>
->>> ip_checker.check('68.128.212.240')
-<DNSBLResult: 68.128.212.240 [BLACKLISTED] (6/52)>
-```
-### Check domain
-```
->>> import pydnsbl
->>> domain_checker = pydnsbl.DNSBLDomainChecker()
->>> domain_checker.check('google.com')
-<DNSBLResult: google.com  (0/4)>
->>> domain_checker.check('belonging708-info.xyz')
-<DNSBLResult: belonging708-info.xyz [BLACKLISTED] (2/4)>
+
+### Via CLI
+
+```bash
+dnsbl-check  --help
+usage: DNS-BL Lookup-Client [-h] (-i IP | -d DOMAIN) [-j JSON] [-p PROVIDERS]
+
+options:
+  -h, --help            show this help message and exit
+  -i IP, --ip IP        IP to check
+  -d DOMAIN, --domain DOMAIN
+                        Domain to check
+  -j JSON, --json JSON  Only output JSON
+  -p PROVIDERS, --providers PROVIDERS
+                        If the provider details should be added to the output                        
 ```
 
-### DNSBLResult properties
-- `DNSBLResult.addr` - ip address or domain that was checked
-- `DNSBLResult.blacklisted` - boolean, True if ip/domain detected by at least one provider
-- `DNSBLResult.detected_by` - dictionary containing providers hosts detected this ip/domain as keys and 
-their category verdicts
-- `DNSBLResult.categories` - combined categories from all providers for this ip/domain
-- `DNSBLResult.providers` - list of providers that was performing the check
-- `DNSBLResult.failed_providers` - list of providers that was unable to check this ip properly (possibly provider was down)
+**Example:**
 
-```
->>> result = domain_checker.check('belonging708-info.xyz')
->>> result.addr
-'belonging708-info.xyz'
->>> result.blacklisted
-True
->>> result.detected_by
-{'multi.surbl.org': ['unknown'], 'dbl.spamhaus.org': ['spam']}
->>> result.categories
-{'unknown', 'spam'}
->>> result.providers
-[<Provider: uribl.spameatingmonkey.net>, <Provider: multi.surbl.org>, <Provider: rhsbl.sorbs.net >, <Provider: dbl.spamhaus.org>]
->>> result.failed_providers
-[]
-
+```bash
+dnsbl-check --ip 134.209.173.54
+> Checking IP 134.209.173.54 ..
+> {
+>   "detected": true,
+>   "detected_by": [
+>     "all.s5h.net",
+>     "dnsbl-3.uceprotect.net"
+>   ],
+>   "categories": [
+>     "unknown"
+>   ],
+>   "count": {
+>     "detected": 2,
+>     "checked": 43,
+>     "failed": 2
+>   }
+> }
 ```
 
-## Extending/overriding providers
+----
 
-### Basic
+### Programmatically
 
-```python
+```python3
+# IPs
+from dnsbl_check import CheckIP
+with CheckIP() as checker:
+    result = checker.check('134.209.173.54')
+
+print(result)
+# <DNSBLResult: 134.209.173.54 [DETECTED] (2/43)>
+print(result.to_dict())
+# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blackholes.five-ten-sg.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'combined.rbl.msrbl.net', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.cyberlogic.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'images.rbl.msrbl.net', 'ips.backscatterer.org', 'ix.dnsbl.manitu.net', 'korea.services.net', 'matrix.spfbl.net', 'phishing.rbl.msrbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spam.rbl.msrbl.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.imp.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virbl.bit.nl', 'virus.rbl.msrbl.net', 'virus.rbl.jp', 'wormrbl.imp.ch', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
+print(result.to_json())
+# ... (to_dict but in pretty json)
+
+# Domains
+from dnsbl_check import CheckDomain
+with CheckDomain() as checker:
+    result = checker.check('maleware.com')
+
+print(result)
+# <DNSBLResult: maleware.com (0/43)>
+```
+
+#### Adding custom providers
+
+```python3
+from dnsbl_check import CheckIP
+from dnsbl_check.providers import BASE_PROVIDERS, Provider
+p = BASE_PROVIDERS + [Provider('dnsbl.oxl.app')]
+with CheckIP(providers=p) as checker:
+    result = checker.check('134.209.173.54')
  
-from pydnsbl import DNSBLIpChecker, providers
-from pydnsbl.providers import BASE_PROVIDERS, Provider
-providers = BASE_PROVIDERS + [Provider('yourprovider1.com'), ...]
-checker = DNSBLIpChecker(providers=providers)
+print(result)
+# <DNSBLResult: 134.209.173.54 [DETECTED] (3/44)>
 ```
 
-### Advanced
+----
 
-Take a look into providers.py file.
+## Contributing
 
--   Use **Provider** class to create your custom providers.
--   Override **process_response** method of **Provider** class to map
-    providers response codes (127.0.0.x) to DNSBL categories.
+Contributions are welcome (:
 
-Contact
--------
+If you have ideas on how to improve the project feel free to:
+* [report Issues](https://github.com/O-X-L/dnsbl-checker/issues)
+* [request Features](https://github.com/O-X-L/dnsbl-checker/issues)
+* [Discuss about the implementation](https://github.com/O-X-L/dnsbl-checker/discussions)
+* or contact us directly: [contact+dnsblcheck@oxl.at](mailto://contact+dnsblcheck@oxl.at)
+* [create Pull-Requests](https://github.com/O-X-L/dnsbl-checker/pulls) for
+  * improving and/or extending the Unit-Tests
+  * improving Performance
+  * fixing bugs
 
-Feel free to contact me: ippolitov87 at gmail.com
+But please do not post any generic AI-slop.. thanks.

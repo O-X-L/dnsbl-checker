@@ -1,27 +1,43 @@
-Changelog
-All notable changes to this project will be documented in this file.
+# Changelog
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [2.0.0] - 2025-07-24
 
-## [Unreleased]
+## Features
+- Type hints
+- Usage via Context-Manager
+- Simple CLI-interface
+
+## Fixes
+- Cleanup of async resources
+- [Errors interpreted as matches](https://github.com/dmippolitov/pydnsbl/issues/27) [@felmoltor](https://github.com/felmoltor)
+- [Removed uceprotect.net list](https://github.com/dmippolitov/pydnsbl/issues/38) [@felmoltor](https://github.com/felmoltor)
+
+----
 
 ## [1.1.7] - 2025-03-25
 ### Changed
 - Updated providers list
 - Security Fixes (IDNA vuln)
 
+----
+
 ## [1.1.6] - 2023-10-17
 - Fixed incorrect ipv6 conversion (#31)
+
+----
 
 ## [1.1.5] - 2023-01-02
 ### Changed
 - Updated providers list
 
+----
+
 ## [1.1.4] - 2021-10-03
 ### Changed
 - improved domain regex to allow usage for 3rd+ level domains (inspired by #22)
 - removed some duplicated sorbs.net blacklists (#21)
+
+----
 
 ## [1.1.0] - 2020-09-27
 ### Added
@@ -29,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated providers list
+
+----
 
 ## [1.0.0] - 2020-03-08
 ### Added
@@ -39,5 +57,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - DNSBLChecker marked as deprecated
-
-

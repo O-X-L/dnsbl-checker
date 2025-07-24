@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dnsbl-check"
+authors = [
+    {name = "Rath Pascal", email = "contact@oxl.at"},
+]
+description = "OXL DNSBL Checker"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["dnsbl", "blocklists"]
+license = {file = "LICENSE.txt"}
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: MIT',
+]
+dynamic = ["dependencies", "version"]
+
+[project.urls]
+Homepage = "https://www.oxl.at"
+Documentation = "https://github.com/O-X-L/dnsbl-checker"
+Repository = "https://github.com/O-X-L/dnsbl-checker.git"
+Issues = "https://github.com/O-X-L/dnsbl-checker/issues"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+version = {file = ["VERSION"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt"]
+
+[project.scripts]
+dnsbl-check = "dnsbl_check.__main__:main"

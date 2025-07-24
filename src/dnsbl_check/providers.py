@@ -4,19 +4,13 @@ Most part of _BASE_PROVIDERS was taken from https://github.com/vincecarney/dnsbl
 """
 ### DNSBL CATEGORIES ###
 # providers answers could be interpreted in one of the following categories
-DNSBL_CATEGORY_UNKNOWN = 'unknown'
-DNSBL_CATEGORY_SPAM = 'spam'
-DNSBL_CATEGORY_EXPLOITS = 'exploits'
-DNSBL_CATEGORY_PHISH = 'phish'
-DNSBL_CATEGORY_MALWARE = 'malware'
-DNSBL_CATEGORY_CNC = 'cnc'
-DNSBL_CATEGORY_ABUSED = 'abused'
-DNSBL_CATEGORY_LEGIT = 'legit'
-DNSBL_CATEGORY_ERROR = 'error'
 
-class Provider(object):
+# pylint: disable=W0401,W0614
+from config import *
 
-    def __init__(self, host):
+
+class Provider:
+    def __init__(self, host: str):
         self.host = host
 
     def process_response(self, response):
@@ -38,82 +32,38 @@ class Provider(object):
         result = set()
         if response:
             result.add(DNSBL_CATEGORY_UNKNOWN)
+
         return result
 
     def __repr__(self):
-        return "<Provider: %s>" % self.host
+        return f"<Provider: {self.host}>"
+
 
 class ZenSpamhaus(Provider):
     """ Combined spamhaus list:
         https://www.spamhaus.org/faq/section/DNSBL%20Usage#200
     """
 
-    def __init__(self, host='zen.spamhaus.org'):
-        Provider.__init__(self, host=host)
+    def __init__(self):
+        Provider.__init__(self, host='zen.spamhaus.org')
 
     def process_response(self, response):
         categories = set()
         for result in response:
             if result.host in ['127.0.0.2', '127.0.0.3', '127.0.0.9']:
                 categories.add(DNSBL_CATEGORY_SPAM)
+
             elif result.host in ['127.0.0.4', '127.0.0.5', '127.0.0.6', '127.0.0.7']:
                 categories.add(DNSBL_CATEGORY_EXPLOITS)
+
             elif result.host in ['127.255.255.252', '127.255.255.254', '127.255.255.255']:
                 categories.add(DNSBL_CATEGORY_ERROR)
+
             else:
                 categories.add(DNSBL_CATEGORY_UNKNOWN)
+
         return categories
 
-# this list is converted into list of Providers bellow
-
-_BASE_PROVIDERS = [
-    'all.s5h.net',
-    'aspews.ext.sorbs.net',
-    'b.barracudacentral.org',
-    'bl.nordspam.com',
-    'blackholes.five-ten-sg.com',
-    'blacklist.woody.ch',
-    'bogons.cymru.com',
-    # The provider zen.spamhaus.org is already being used. abuseat.org redirects to spamhaus.org
-    # Additionally, abuseat.org has the same behaviour as zen.spamhaus.org
-    # and we manage the new DNSBL_CATEGORY_ERROR in the zen.spamhaus.org Provider class
-    # 'cbl.abuseat.org',
-    'combined.abuse.ch',
-    'combined.rbl.msrbl.net',
-    'db.wpbl.info',
-    'dnsbl-2.uceprotect.net',
-    'dnsbl-3.uceprotect.net',
-    'dnsbl.cyberlogic.net',
-    'dnsbl.sorbs.net',
-    'drone.abuse.ch',
-    'images.rbl.msrbl.net',
-    'ips.backscatterer.org',
-    'ix.dnsbl.manitu.net',
-    'korea.services.net',
-    'matrix.spfbl.net',
-    'phishing.rbl.msrbl.net',
-    'proxy.bl.gweep.ca',
-    'proxy.block.transip.nl',
-    'psbl.surriel.com',
-    'rbl.interserver.net',
-    'relays.bl.gweep.ca',
-    'relays.bl.kundenserver.de',
-    'relays.nether.net',
-    'residential.block.transip.nl',
-    'singular.ttk.pte.hu',
-    'spam.dnsbl.sorbs.net',
-    'spam.rbl.msrbl.net',
-    'spambot.bls.digibase.ca',
-    'spamlist.or.kr',
-    'spamrbl.imp.ch',
-    'spamsources.fabel.dk',
-    'ubl.lashback.com',
-    'virbl.bit.nl',
-    'virus.rbl.msrbl.net',
-    'virus.rbl.jp',
-    'wormrbl.imp.ch',
-    'z.mailspike.net',
-]
 
 class DblSpamhaus(Provider):
     """ Spamhaus domain blacklist
@@ -134,8 +84,8 @@ class DblSpamhaus(Provider):
         '127.255.255.255': {DNSBL_CATEGORY_ERROR},
     }
 
-    def __init__(self, host='dbl.spamhaus.org'):
-        Provider.__init__(self, host=host)
+    def __init__(self):
+        Provider.__init__(self, host='dbl.spamhaus.org')
 
     def process_response(self, response):
         categories = set()
@@ -145,12 +95,6 @@ class DblSpamhaus(Provider):
 
         return categories
 
-# list of domain providers
-_DOMAIN_PROVIDERS = [
-    'uribl.spameatingmonkey.net',
-    'multi.surbl.org',
-    'rhsbl.sorbs.net '
-]
 
-BASE_PROVIDERS = [Provider(host) for host in _BASE_PROVIDERS] + [ZenSpamhaus()]
-BASE_DOMAIN_PROVIDERS = [Provider(host) for host in _DOMAIN_PROVIDERS] + [DblSpamhaus()]
+BASE_PROVIDERS = [Provider(host) for host in RAW_BASE_PROVIDERS] + [ZenSpamhaus()]
+BASE_DOMAIN_PROVIDERS = [Provider(host) for host in RAW_DOMAIN_PROVIDERS] + [DblSpamhaus()]
