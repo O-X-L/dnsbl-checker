@@ -18,29 +18,36 @@ def main():
     g.add_argument('-d', '--domain', type=str, default=None, help='Domain to check')
     parser.add_argument('-j', '--json', type=bool, default=False, help='Only output JSON')
     parser.add_argument(
+        '-s', '--skip-providers', type=str, default='',
+        help='Comma-separated list of base-providers to skip',
+    )
+    parser.add_argument(
         '--details', action='store_true', default=False,
         help='If the result details should be added to the output',
     )
     args = parser.parse_args()
 
+    skip_providers = args.skip_providers.split(',')
+
     if args.ip is not None:
         if not args.json:
             print(f'Checking IP {args.ip} ..')
 
-        with CheckIP() as checker:
+        with CheckIP(skip_providers=skip_providers) as checker:
             result = checker.check(args.ip)
 
     else:
         if not args.json:
             print(f'Checking Domain {args.domain} ..')
 
-        with CheckDomain() as checker:
+        with CheckDomain(skip_providers=skip_providers) as checker:
             result = checker.check(args.domain)
 
     response = {
         'detected': result.detected,
         'detected_by': [p.host for p in result.detected_by],
         'categories': list(result.categories),
+        'general_errors': list(result.general_errors),
         'count': {
             'detected': len(result.detected_by),
             'checked': len(result.providers),

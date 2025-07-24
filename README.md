@@ -32,7 +32,7 @@ If you are interested in [report-based reputation-systems => check out our Risk-
 
 ```bash
 dnsbl-check  --help
-usage: DNS-BL Lookup-Client [-h] (-i IP | -d DOMAIN) [-j JSON] [--details]
+usage: DNS-BL Lookup-Client [-h] (-i IP | -d DOMAIN) [-j JSON] [-s SKIP_PROVIDERS] [--details]
 
 options:
   -h, --help            show this help message and exit
@@ -40,7 +40,8 @@ options:
   -d DOMAIN, --domain DOMAIN
                         Domain to check
   -j JSON, --json JSON  Only output JSON
-  --details             If the result details should be added to the output                     
+  -s SKIP_PROVIDERS, --skip-providers SKIP_PROVIDERS
+                        Comma-separated list of base-providers to skip
 ```
 
 **Example:**

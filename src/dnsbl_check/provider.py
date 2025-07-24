@@ -1,10 +1,3 @@
-"""
-Place to define providers.
-Most part of _BASE_PROVIDERS was taken from https://github.com/vincecarney/dnsbl
-"""
-### DNSBL CATEGORIES ###
-# providers answers could be interpreted in one of the following categories
-
 # pylint: disable=W0401,W0614
 from config import *
 
@@ -96,5 +89,20 @@ class DblSpamhaus(Provider):
         return categories
 
 
-BASE_PROVIDERS = [Provider(host) for host in RAW_BASE_PROVIDERS] + [ZenSpamhaus()]
-BASE_DOMAIN_PROVIDERS = [Provider(host) for host in RAW_DOMAIN_PROVIDERS] + [DblSpamhaus()]
+CUSTOM_PROVIDERS = {
+    'zen.spamhaus.org': ZenSpamhaus,
+    'dbl.spamhaus.org': DblSpamhaus,
+}
+
+BASE_PROVIDERS_IP = [
+     Provider(host) for host in RAW_PROVIDERS_IP if host not in CUSTOM_PROVIDERS
+]
+BASE_PROVIDERS_IP.extend([
+     CUSTOM_PROVIDERS[host]() for host in RAW_PROVIDERS_IP if host in CUSTOM_PROVIDERS
+])
+BASE_PROVIDERS_DOMAIN = [
+     Provider(host) for host in RAW_PROVIDERS_DOMAIN if host not in CUSTOM_PROVIDERS
+]
+BASE_PROVIDERS_DOMAIN.extend([
+     CUSTOM_PROVIDERS[host]() for host in RAW_PROVIDERS_DOMAIN if host in CUSTOM_PROVIDERS
+])

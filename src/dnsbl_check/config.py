@@ -1,7 +1,7 @@
 from os import environ
 
 DEBUG = 'DEV' in environ
-RAW_BASE_PROVIDERS = [
+RAW_PROVIDERS_IP = [
     'all.s5h.net',
     'b.barracudacentral.org',
     'bl.nordspam.com',
@@ -62,8 +62,9 @@ RAW_BASE_PROVIDERS = [
     'rbl2.triumf.ca',
     'dnsrbl.swinog.ch',
     'dnsbl.spfbl.net',
+    'dbl.spamhaus.org',
 ]
-RAW_DOMAIN_PROVIDERS = [
+RAW_PROVIDERS_DOMAIN = [
     'uribl.spameatingmonkey.net',
     'multi.surbl.org',
 ]

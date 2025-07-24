@@ -1,9 +1,14 @@
 # Changelog
 
-## [2.0.1] - 2025-?
+## [2.0.1] - 2025-07-24
 
 ## Features
 - Added new base-lists
+- Ability to skip some base-providers
+- Refactored Unit-Tests
+
+## Fixes
+- Fix for Domain-Check
 
 ## Deprecations
 - Removed `bulk_check` as high-volume lookups are discouraged by DNSBL-providers and users could simply use a loop instead
