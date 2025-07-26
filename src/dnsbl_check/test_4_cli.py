@@ -26,12 +26,14 @@ def _cli_cmd(cmd: str) -> dict:
 
 def test_cli_base():
     r = _cli_cmd('--help')
+    assert r['stderr'] is None
     assert r['rc'] == 0
     assert 'usage: DNS-BL Lookup-Client' in r['stdout']
 
 
 def test_cli_check_ip():
     r = _cli_cmd('--ip=1.1.1.1 --json')
+    assert r['stderr'] is None
     assert r['rc'] == 0
     r = json_loads(r['stdout'])
     assert 'detected' in r
@@ -47,6 +49,7 @@ def test_cli_check_ip():
 
 def test_cli_check_domain():
     r = _cli_cmd('--domain=risk.oxl.app --json')
+    assert r['stderr'] is None
     assert r['rc'] == 0
     r = json_loads(r['stdout'])
     assert 'detected' in r
@@ -62,6 +65,7 @@ def test_cli_check_domain():
 
 def test_cli_details():
     r = _cli_cmd('--ip=1.1.1.1 --json --details')
+    assert r['stderr'] is None
     assert r['rc'] == 0
     r = json_loads(r['stdout'])
     assert 'detected' in r

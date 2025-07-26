@@ -4,6 +4,8 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+PYTHONPATH=''
+
 echo ''
 echo 'LINTING Python'
 echo ''
