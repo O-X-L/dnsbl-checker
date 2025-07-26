@@ -5,6 +5,7 @@ DEBUG = 'DEV' in environ
 # NOTE: some info about the providers can be found here:
 #   https://github.com/O-X-L/dnsbl-checker/blob/latest/Providers.md
 RAW_PROVIDERS_IP = [
+    'ip.dnsbl.risk.oxl.app',
     'all.s5h.net',
     'b.barracudacentral.org',
     'bl.nordspam.com',
@@ -112,7 +113,7 @@ RAW_PROVIDERS_DOMAIN = [
     'fresh.fmb.la',
     'uribl.rspamd.com',
     # 'dnsbl.spfbl.net',
-    'abuse.spfbl.net',
+    # 'abuse.spfbl.net',
     'dbl.suomispam.net',
     'black.uribl.com',
     'grey.uribl.com',
