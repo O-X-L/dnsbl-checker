@@ -11,7 +11,7 @@ Please be aware that the providers of such public DNSBL mirrors discourage high-
 * Asynchronous DNS requests
 * Multi-provider support
 * Ability to add custom providers
-* Check for 50+ lists usually takes a few seconds
+* Check for 50+ lists usually takes ~1 second
 * Can also check domains
 
 ----
