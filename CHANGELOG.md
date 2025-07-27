@@ -2,34 +2,35 @@
 
 ## [2.0.3] - 2025-?
 
-
+### Features
+- Providers supplied via CLI-arguments are initialized with custom-config if it exists
 
 ----
 
 ## [2.0.2] - 2025-07-27
 
-## Features
+### Features
 - Added new base-lists
 - Ability to add additional providers in CLI
 - Provider-based query-support-config (IPv4/IPv6/Domain)
 - CLI argument to supply the only providers that should be queried (ignoring the built-in list)
 
-## Deprecations
+### Deprecations
 - Removed dead lists
 
 ----
 
 ## [2.0.1] - 2025-07-24
 
-## Features
+### Features
 - Added new base-lists
 - Ability to skip some base-providers
 - Refactored Unit-Tests
 
-## Fixes
+### Fixes
 - Fix for Domain-Check
 
-## Deprecations
+### Deprecations
 - Removed `bulk_check` as high-volume lookups are discouraged by DNSBL-providers and users could simply use a loop instead
 - Removed dead lists
 
@@ -37,12 +38,12 @@
 
 ## [2.0.0] - 2025-07-24
 
-## Features
+### Features
 - Type hints
 - Usage via Context-Manager
 - Simple CLI-interface
 
-## Fixes
+### Fixes
 - Cleanup of async resources
 - [Errors interpreted as matches](https://github.com/dmippolitov/pydnsbl/issues/27) [@felmoltor](https://github.com/felmoltor)
 - [Removed uceprotect.net list](https://github.com/dmippolitov/pydnsbl/issues/38) [@felmoltor](https://github.com/felmoltor)

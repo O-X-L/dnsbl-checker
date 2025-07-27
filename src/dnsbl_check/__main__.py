@@ -6,9 +6,22 @@ from json import dumps as json_dumps
 sys_path.append(os_path.dirname(os_path.abspath(__file__)))
 
 # pylint: disable=C0413
-from provider import Provider
+from provider import Provider, BaseProvider
 from checker import CheckDomain, CheckIP
-from provider_config import BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
+from provider_config import BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN, CUSTOM_PROVIDERS
+
+
+def _init_providers(providers: list[str]) -> list[BaseProvider]:
+    out = []
+
+    for p in providers:
+        if p in CUSTOM_PROVIDERS:
+            out.append(CUSTOM_PROVIDERS[p]())
+
+        else:
+            out.append(Provider(p))
+
+    return out
 
 
 def main():
@@ -37,8 +50,8 @@ def main():
     )
     args = parser.parse_args()
 
-    add_providers = [Provider(p) for p in args.add_providers.split(',')]
-    only_providers = [Provider(p) for p in args.only_providers.split(',')]
+    add_providers = _init_providers(args.add_providers.split(','))
+    only_providers = _init_providers(args.only_providers.split(','))
     skip_providers = args.skip_providers.split(',')
 
     if args.ip is not None:
@@ -51,7 +64,7 @@ def main():
         if not args.json:
             print(f'Checking IP {args.ip} ..')
 
-        with CheckIP(providers=providers, skip_providers=skip_providers, ) as checker:
+        with CheckIP(providers=providers, skip_providers=skip_providers) as checker:
             result = checker.check(args.ip)
 
     else:
