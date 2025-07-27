@@ -98,7 +98,10 @@ dnsbl-check --ip 134.209.173.54
 > }
 
 # add or skip DNS-BL providers:
-dnsbl-check --ip=134.209.173.54 --add-providers dnsbl.risk.oxl.app,dnsbl.host-svc.com --skip-providers abuse.spfbl.net
+dnsbl-check --ip=134.209.173.54 --add-providers ip.dnsbl.risk.oxl.app,dnsbl.host-svc.com --skip-providers abuse.spfbl.net
+
+# or just check one provider:
+dnsbl-check --ip=134.209.173.54 --only-providers ip.dnsbl.risk.oxl.app,dnsbl.host-svc.com
 ```
 
 ----
