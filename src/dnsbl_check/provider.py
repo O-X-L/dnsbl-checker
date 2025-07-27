@@ -1,5 +1,6 @@
 from pycares import ares_query_a_result
 
+from utils import valid_domain
 from config import DNSBL_CATEGORY_UNKNOWN
 
 
@@ -20,6 +21,10 @@ class BaseProvider:
 
         else:
             self.host = host
+
+        _, valid = valid_domain(self.host)
+        if not valid:
+            raise ValueError('Invalid provider hostname supplied')
 
     def response_categories(self, response: (list[ares_query_a_result], ares_query_a_result)) -> set[str]:
         categories = set()

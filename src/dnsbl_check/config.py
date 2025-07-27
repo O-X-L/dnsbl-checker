@@ -1,6 +1,11 @@
 from os import environ
+from re import compile as regex_compile
 
 DEBUG = 'DEV' in environ
+
+# https://regex101.com/r/vdrgm7/1
+DOMAIN_REGEX = regex_compile(r"^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--[a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$")
+
 
 # NOTE: some info about the providers can be found here:
 #   https://github.com/O-X-L/dnsbl-checker/blob/latest/Providers.md

@@ -5,6 +5,9 @@
 ### Features
 - Providers supplied via CLI-arguments are initialized with custom-config if it exists
 
+### Fixes
+- Handle invalid provider hostnames
+
 ----
 
 ## [2.0.2] - 2025-07-27

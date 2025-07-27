@@ -6,9 +6,9 @@ import ipaddress
 from time import time
 from json import dumps as json_dumps
 
-import idna
 import aiodns
 
+from utils import valid_domain
 from provider import BaseProvider
 from config import DEFAULT_TIMEOUT, DEBUG
 from result import DNSBLResult, DNSBLResponse
@@ -131,16 +131,12 @@ class AsyncCheckIP(BaseAsyncDNSBLChecker):
 
 
 class AsyncCheckDomain(BaseAsyncDNSBLChecker):
-    # https://regex101.com/r/vdrgm7/1
-    DOMAIN_REGEX = re.compile(r"^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--[a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$")
-
     def prepare_query(self, request):
-        request = request.lower() # Adding support for capitalized letters in domain name.
-        domain_idna = idna.encode(request).decode()
-        if not self.DOMAIN_REGEX.match(domain_idna):
-            raise ValueError(f'should be valid domain, got {domain_idna}')
+        domain, valid = valid_domain(request)
+        if not valid:
+            raise ValueError('Invalid domain provided')
 
-        return domain_idna
+        return domain
 
 
 class BaseDNSBLChecker:

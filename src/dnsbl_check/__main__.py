@@ -15,6 +15,9 @@ def _init_providers(providers: list[str]) -> list[BaseProvider]:
     out = []
 
     for p in providers:
+        if p.strip() == '':
+            continue
+
         if p in CUSTOM_PROVIDERS:
             out.append(CUSTOM_PROVIDERS[p]())
 
@@ -49,6 +52,12 @@ def main():
         help='If the result details should be added to the output',
     )
     args = parser.parse_args()
+
+    if not args.json:
+        print('\nWARNING:')
+        print('  This script cannot impact if the result of a DNS-BL is a false-positive.')
+        print("  You will have to verify which providers provide 'valid' information for your use-cases "
+              "and change the list of providers accordingly!\n")
 
     add_providers = _init_providers(args.add_providers.split(','))
     only_providers = _init_providers(args.only_providers.split(','))

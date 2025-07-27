@@ -14,7 +14,11 @@ Please be aware that the providers of such public DNSBL mirrors discourage high-
 * Check for 50+ lists usually takes a few seconds
 * Can also check domains
 
-This started as a fork of [github.com/dmippolitov/pydnsbl](https://github.com/dmippolitov/pydnsbl) - so thanks to the contributors ❤️
+----
+
+❤️ This started as a fork of [github.com/dmippolitov/pydnsbl](https://github.com/dmippolitov/pydnsbl) - so thanks to the contributors
+
+❤️ Also thanks go to the maintainers of [multirbl.valli.org](https://multirbl.valli.org/list/) for collecting and sharing information about existing providers
 
 If you are interested in [report-based reputation-systems => check out our Risk-DB project](https://github.com/O-X-L/risk-db).
 
@@ -48,9 +52,17 @@ If you want us to add additional providers or have found that existing ones have
 
 `pip install dnsbl-check`
 
+See: [pypi.org](https://pypi.org/project/dnsbl-check/)
+
 ----
 
 ## Usage
+
+**WARNING**:
+
+> This script/library cannot impact if the result of a DNS-BL is a false-positive.
+> 
+> You will have to verify which providers provide 'valid' information for your use-cases and change the list of providers accordingly!
 
 ### Via CLI
 
@@ -84,16 +96,22 @@ dnsbl-check --ip 134.209.173.54
 >   "detected": true,
 >   "detected_by": [
 >     "all.s5h.net",
->     "dnsbl-3.uceprotect.net"
+>     "dnsbl-3.uceprotect.net",
+>     "dnsbl.spfbl.net",
+>     "rbl.blockedservers.com",
+>     "bl.fmb.la",
+>     "ip.dnsbl.risk.oxl.app",
+>     "abuse.spfbl.net"
 >   ],
 >   "categories": [
->     "unknown"
+>     "unknown",
+>     "abused"
 >   ],
 >   "general_errors": [],
 >   "count": {
->     "detected": 2,
->     "checked": 43,
->     "failed": 2
+>     "detected": 7,
+>     "checked": 84,
+>     "failed": 0
 >   }
 > }
 
@@ -115,11 +133,18 @@ with CheckIP() as checker:
     result = checker.check('134.209.173.54')
 
 print(result)
-# <DNSBLResult: 134.209.173.54 [DETECTED] (2/43)>
+# <DNSBLResult: 134.209.173.54 [DETECTED] (7/84)>
 print(result.to_dict())
-# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net'], 'categories': ['unknown'], 'general_errors': [], 'count': {'detected': 2, 'checked': 43, 'failed': 2}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'aspews.ext.sorbs.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blacklist.woody.ch', 'bogons.cymru.com', 'combined.abuse.ch', 'db.wpbl.info', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'dnsbl.sorbs.net', 'drone.abuse.ch', 'ips.backscatterer.org', 'korea.services.net', 'matrix.spfbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'spam.dnsbl.sorbs.net', 'spambot.bls.digibase.ca', 'spamlist.or.kr', 'spamrbl.swinog.ch', 'spamsources.fabel.dk', 'ubl.lashback.com', 'virus.rbl.jp', 'z.mailspike.net', 'zen.spamhaus.org'], 'failed_providers': ['ix.dnsbl.manitu.net', 'spamlist.or.kr']}
+# {'request': '134.209.173.54', 'detected': True, 'detected_by': ['all.s5h.net', 'dnsbl-3.uceprotect.net', 'dnsbl.spfbl.net', 'rbl.blockedservers.com', 'bl.fmb.la', 'ip.dnsbl.risk.oxl.app', 'abuse.spfbl.net'], 'categories': ['abused', 'unknown'], 'general_errors': [], 'count': {'detected': 7, 'checked': 84, 'failed': 0}, 'detected_provider_categories': {'all.s5h.net': ['unknown'], 'dnsbl-3.uceprotect.net': ['unknown'], 'dnsbl.spfbl.net': ['unknown'], 'rbl.blockedservers.com': ['unknown'], 'bl.fmb.la': ['unknown'], 'ip.dnsbl.risk.oxl.app': ['abused'], 'abuse.spfbl.net': ['unknown']}, 'checked_providers': ['all.s5h.net', 'b.barracudacentral.org', 'bl.nordspam.com', 'blacklist.woody.ch', 'xbl.spamhaus.org', 'combined.abuse.ch', 'drone.abuse.ch', 'korea.services.net', 'matrix.spfbl.net', 'proxy.bl.gweep.ca', 'proxy.block.transip.nl', 'psbl.surriel.com', 'rbl.interserver.net', 'relays.bl.gweep.ca', 'relays.bl.kundenserver.de', 'relays.nether.net', 'residential.block.transip.nl', 'singular.ttk.pte.hu', 'ubl.lashback.com', 'virus.rbl.jp', 'z.mailspike.net', 'bl.blocklist.de', 'rbl.your-server.de', 'dnsbl.abusix.net', 'dnsbl.calivent.com.pe', 'dnsbl.dronebl.org', 'hostkarma.junkemailfilter.com', 'black.junkemailfilter.com', 'orvedb.aupads.org', 'dnsbl-1.uceprotect.net', 'dnsbl-2.uceprotect.net', 'dnsbl-3.uceprotect.net', 'duinv.aupads.org', 'ubl.unsubscore.com', 'rbl2.triumf.ca', 'dnsrbl.swinog.ch', 'dnsbl.spfbl.net', 'krn.korumail.com', 'work.drbl.gremlin.ru', 'dnsblchile.org', 'block.ascams.com', 'dnsbl.ascams.com', 'mix.ascams.com', 'superblock.ascams.com', 'rbl.blockedservers.com', 'netscan.rbl.blockedservers.com', 'rbl.abuse.ro', 'pbl.abuse.ro', 'bl.fmb.la', 'rbl.fasthosts.co.uk', 'rbl.efnetrbl.org', 'sbl.nszones.com', 'bl.nszones.com', 'bl.suomispam.net', 'bad.virusfree.cz', 'bip.virusfree.cz', 'dnsbl.zapbl.net', 'ip.dnsbl.risk.oxl.app', 'zen.spamhaus.org', 'ips.backscatterer.org', 'abuse.spfbl.net', 'spambot.bls.digibase.ca', 'openproxy.bls.digibase.ca', 'proxyabuse.bls.digibase.ca', 'spamrbl.swinog.ch', 'spamsources.fabel.dk', 'spam.spamrats.com', 'dyna.spamrats.com', 'noptr.spamrats.com', 'auth.spamrats.com', 'bl.spamcop.net', 'bl.0spam.org', 'rbl.0spam.org', 'nbl.0spam.org', 'spam.dnsbl.anonmails.de', 'tor.dan.me.uk', 'spam.abuse.ch', 'backscatter.spameatingmonkey.net', 'bl.spameatingmonkey.net', 'netbl.spameatingmonkey.net', 'dnsbl.justspam.org', 'spam.rbl.blockedservers.com', 'rbl.polspam.pl', 'ip4.bl.zenrbl.pl'], 'failed_providers': []}
 print(result.to_json())
-# ... (to_dict but in pretty json)
+# ... (to_dict but in pretty-json)
+
+with CheckIP() as checker:
+    result = checker.check('2a01:4f8:c010:97b4::1')
+
+print(result)
+# IPv6 support
+# <DNSBLResult: 2a01:4f8:c010:97b4::1 [DETECTED] (2/65)>
 
 # Domains
 from dnsbl_check import CheckDomain
@@ -127,7 +152,7 @@ with CheckDomain() as checker:
     result = checker.check('malware.com')
 
 print(result)
-# <DNSBLResult: malware.com (0/2)>
+# <DNSBLResult: malware.com (0/24)>
 
 # add or skip DNS-BL providers
 from dnsbl_check.provider import Provider, BASE_PROVIDERS_IP

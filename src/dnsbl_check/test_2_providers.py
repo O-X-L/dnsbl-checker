@@ -1,4 +1,18 @@
+import pytest
+
 from test_1_checker import MockedDNSResolver, AresResponse
+
+
+def test_provider_init():
+    from provider import Provider
+
+    Provider('dnsbl.example.org')
+
+    with pytest.raises(ValueError):
+        Provider('')
+
+    with pytest.raises(ValueError):
+        Provider('!nvalid.example.org')
 
 
 def test_provider_custom_init():
