@@ -67,6 +67,8 @@ options:
   -j JSON, --json JSON  Only output JSON
   -s SKIP_PROVIDERS, --skip-providers SKIP_PROVIDERS
                         Comma-separated list of base-providers to skip
+  -a ADD_PROVIDERS, --add-providers ADD_PROVIDERS
+                        Comma-separated list of additional DNS-BL provider-domains to query
   -o ONLY_PROVIDERS, --only-providers ONLY_PROVIDERS
                         Comma-separated list of DNS-BL provider-domains to query
                         (ignoring the built-in default providers)
