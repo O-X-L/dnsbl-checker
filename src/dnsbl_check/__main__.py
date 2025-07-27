@@ -6,8 +6,9 @@ from json import dumps as json_dumps
 sys_path.append(os_path.dirname(os_path.abspath(__file__)))
 
 # pylint: disable=C0413
-from provider import Provider, BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
+from provider import Provider
 from checker import CheckDomain, CheckIP
+from provider_config import BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
 
 
 def main():
@@ -27,16 +28,25 @@ def main():
         help='Comma-separated list of additional DNS-BL provider-domains to query',
     )
     parser.add_argument(
+        '-o', '--only-providers', type=str, default='',
+        help='Comma-separated list of DNS-BL provider-domains to query (ignoring the built-in default providers)',
+    )
+    parser.add_argument(
         '--details', action='store_true', default=False,
         help='If the result details should be added to the output',
     )
     args = parser.parse_args()
 
-    skip_providers = args.skip_providers.split(',')
     add_providers = [Provider(p) for p in args.add_providers.split(',')]
+    only_providers = [Provider(p) for p in args.only_providers.split(',')]
+    skip_providers = args.skip_providers.split(',')
 
     if args.ip is not None:
-        providers = BASE_PROVIDERS_IP + add_providers
+        if len(only_providers) > 0:
+            providers = only_providers
+
+        else:
+            providers = BASE_PROVIDERS_IP + add_providers
 
         if not args.json:
             print(f'Checking IP {args.ip} ..')
@@ -45,7 +55,11 @@ def main():
             result = checker.check(args.ip)
 
     else:
-        providers = BASE_PROVIDERS_DOMAIN + add_providers
+        if len(only_providers) > 0:
+            providers = only_providers
+
+        else:
+            providers = BASE_PROVIDERS_DOMAIN + add_providers
 
         if not args.json:
             print(f'Checking Domain {args.domain} ..')

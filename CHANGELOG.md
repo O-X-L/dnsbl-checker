@@ -12,6 +12,7 @@
 - Added new base-lists
 - Ability to add additional providers in CLI
 - Provider-based query-support-config (IPv4/IPv6/Domain)
+- CLI argument to supply the only providers that should be queried (ignoring the built-in list)
 
 ## Deprecations
 - Removed dead lists
