@@ -56,7 +56,8 @@ If you want us to add additional providers or have found that existing ones have
 
 ```bash
 dnsbl-check  --help
-usage: DNS-BL Lookup-Client [-h] (-i IP | -d DOMAIN) [-j JSON] [-s SKIP_PROVIDERS] [--details]
+usage: DNS-BL Lookup-Client [-h] (-i IP | -d DOMAIN) [-j] [-s SKIP_PROVIDERS]
+                            [-a ADD_PROVIDERS] [-o ONLY_PROVIDERS] [--details]
 
 options:
   -h, --help            show this help message and exit
@@ -66,6 +67,9 @@ options:
   -j JSON, --json JSON  Only output JSON
   -s SKIP_PROVIDERS, --skip-providers SKIP_PROVIDERS
                         Comma-separated list of base-providers to skip
+  -o ONLY_PROVIDERS, --only-providers ONLY_PROVIDERS
+                        Comma-separated list of DNS-BL provider-domains to query
+                        (ignoring the built-in default providers)
   --details             If the result details should be added to the output
 ```
 
@@ -115,10 +119,10 @@ print(result.to_json())
 # Domains
 from dnsbl_check import CheckDomain
 with CheckDomain() as checker:
-    result = checker.check('maleware.com')
+    result = checker.check('malware.com')
 
 print(result)
-# <DNSBLResult: maleware.com (0/2)>
+# <DNSBLResult: malware.com (0/2)>
 
 # add or skip DNS-BL providers
 from dnsbl_check.provider import Provider, BASE_PROVIDERS_IP

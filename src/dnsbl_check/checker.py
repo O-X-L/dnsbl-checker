@@ -9,36 +9,29 @@ from json import dumps as json_dumps
 import idna
 import aiodns
 
-from result import DNSBLResult
+from provider import BaseProvider
 from config import DEFAULT_TIMEOUT, DEBUG
-from provider import Provider, BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
+from result import DNSBLResult, DNSBLResponse
+from provider_config import BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
 
 if sys.platform == 'win32' and sys.version_info >= (3, 8):
     # fixes https://github.com/dmippolitov/pydnsbl/issues/12
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
-class DNSBLResponse:
-    def __init__(self, request: str, provider: Provider, response: any, error: any):
-        self.request = request
-        self.provider = provider
-        self.response = response
-        self.error = error
-
-
 class BaseAsyncDNSBLChecker(abc.ABC):
     def __init__(
             self, timeout = DEFAULT_TIMEOUT,
-            providers: list[Provider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
+            providers: list[BaseProvider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
     ):
-        self.providers: list[Provider] = []
+        self.providers: list[BaseProvider] = []
         self.skip_providers: list[str] = []
         if skip_providers is not None:
             self.skip_providers = skip_providers
 
         self._timeout = timeout
         for p in providers:
-            if not hasattr(p, 'host'):
+            if not isinstance(p, BaseProvider):
                 raise ValueError(f'providers should contain only Provider instances: {p} {type(p)}')
 
             self.providers.append(p)
@@ -62,7 +55,7 @@ class BaseAsyncDNSBLChecker(abc.ABC):
                 'error': str(error),
             }))
 
-    async def query_provider(self, request: str, provider: Provider) -> DNSBLResponse:
+    async def query_provider(self, request: str, provider: BaseProvider) -> DNSBLResponse:
         response, error, debug_error = None, None, None
         dnsbl_query = f"{self.prepare_query(request)}.{provider.host}"
 
@@ -87,6 +80,31 @@ class BaseAsyncDNSBLChecker(abc.ABC):
         tasks = []
         for provider in self.providers:
             if provider.host in self.skip_providers:
+                continue
+
+            if isinstance(self, AsyncCheckIP):
+                if not provider.IP4 and not provider.IP6:
+                    if DEBUG:
+                        print(f"DEBUG: Skipping provider {provider.host} because it does not support IP-lookups")
+
+                    continue
+
+                if not provider.IP6 and request.find(':') != -1:
+                    if DEBUG:
+                        print(f"DEBUG: Skipping provider {provider.host} because it does not support IPv6-lookups")
+
+                    continue
+
+                if not provider.IP4 and request.find(':') == -1:
+                    if DEBUG:
+                        print(f"DEBUG: Skipping provider {provider.host} because it does not support IPv4-lookups")
+
+                    continue
+
+            elif isinstance(self, AsyncCheckDomain) and not provider.DOMAIN:
+                if DEBUG:
+                    print(f"DEBUG: Skipping provider {provider.host} because it does not support Domain-lookups")
+
                 continue
 
             tasks.append(self.query_provider(request, provider))
@@ -128,7 +146,7 @@ class AsyncCheckDomain(BaseAsyncDNSBLChecker):
 class BaseDNSBLChecker:
     def __init__(
             self, async_checker: BaseAsyncDNSBLChecker,
-            providers: list[Provider] = BASE_PROVIDERS_IP, timeout = DEFAULT_TIMEOUT, skip_providers: list[str] = None,
+            providers: list[BaseProvider] = BASE_PROVIDERS_IP, timeout = DEFAULT_TIMEOUT, skip_providers: list[str] = None,
     ):
         self._async_checker = async_checker(providers=providers, timeout=timeout, skip_providers=skip_providers)
 
@@ -149,7 +167,7 @@ class BaseDNSBLChecker:
 class CheckIP(BaseDNSBLChecker):
     def __init__(
             self, timeout = DEFAULT_TIMEOUT,
-            providers: list[Provider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
+            providers: list[BaseProvider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
     ):
         BaseDNSBLChecker.__init__(
             self,
@@ -163,7 +181,7 @@ class CheckIP(BaseDNSBLChecker):
 class CheckDomain(BaseDNSBLChecker):
     def __init__(
             self, timeout = DEFAULT_TIMEOUT,
-            providers: list[Provider] = BASE_PROVIDERS_DOMAIN, skip_providers: list[str] = None,
+            providers: list[BaseProvider] = BASE_PROVIDERS_DOMAIN, skip_providers: list[str] = None,
     ):
         BaseDNSBLChecker.__init__(
             self,

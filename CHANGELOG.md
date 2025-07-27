@@ -1,10 +1,17 @@
 # Changelog
 
-## [2.0.2] - 2025-?
+## [2.0.3] - 2025-?
+
+
+
+----
+
+## [2.0.2] - 2025-07-27
 
 ## Features
 - Added new base-lists
 - Ability to add additional providers in CLI
+- Provider-based query-support-config (IPv4/IPv6/Domain)
 
 ## Deprecations
 - Removed dead lists

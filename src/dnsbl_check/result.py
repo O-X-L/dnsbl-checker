@@ -1,30 +1,31 @@
 from json import dumps as json_dumps
 
-from config import DEBUG
-from provider import Provider, DNSBL_CATEGORY_ERROR
+from pycares import ares_query_a_result
+
+from provider import BaseProvider
+from config import DEBUG, DNSBL_CATEGORY_ERROR
+
+
+class DNSBLResponse:
+    def __init__(
+            self, request: str, provider: BaseProvider,
+            response: (list[ares_query_a_result], ares_query_a_result, None),
+            error: (None, any),
+    ):
+        self.request: str = request
+        self.provider: BaseProvider = provider
+        self.response: (list[ares_query_a_result], ares_query_a_result, None) = response
+        self.error: (None, any) = error
 
 
 class DNSBLResult:
-    """
-    DNSBL Result class to keep all info about ip request results.
-
-    Attributes:
-        * request - checked ip/domain
-        * providers - dnsbl that was asked for response while checking
-        * failed_provider - dnsbl that was unable to provide result due
-            to connection issues (connection timeout etc...)
-        * detected_by - list of providers that have the ip listed
-        * provider_categories - dnsbl that have ip listed and categories detected by
-            this dnsbls. dict: {'dnsbl_list_name': list(categories_from_this_dnsbl)}
-        * categories - set of dnsbl categories from all providers (subset of DNSBL_CATEGORIES)
-    """
-    def __init__(self, request: str, results: any):
+    def __init__(self, request: str, results: list[DNSBLResponse]):
         self.request = request
-        self._results = results
+        self._results: list[DNSBLResponse] = results
         self.detected = False
-        self.providers: list[Provider] = []
-        self.failed_providers: list[Provider] = []
-        self.detected_by: list[Provider] = []
+        self.providers: list[BaseProvider] = []
+        self.failed_providers: list[BaseProvider] = []
+        self.detected_by: list[BaseProvider] = []
         self.provider_categories: dict[str: list[str]] = {}
         self.categories = set()
         self.general_errors = set()
@@ -40,24 +41,23 @@ class DNSBLResult:
                 self.general_errors.add(str(result))
                 continue
 
-            provider = result.provider
-            self.providers.append(provider)
+            self.providers.append(result.provider)
             if result.error:
-                self.failed_providers.append(provider)
+                self.failed_providers.append(result.provider)
                 continue
 
             if not result.response:
                 continue
 
             # set detected to True if ip is detected with at least one dnsbl
-            provider_categories = provider.process_response(result.response)
+            provider_categories = result.provider.response_categories(result.response)
             # If the response is an error, do not consider it as detected
             # (refer to https://www.spamhaus.org/faqs/domain-blocklist/#291:~:text=The%20following%20special%20codes%20indicate%20an%20error)
             if provider_categories != {DNSBL_CATEGORY_ERROR}:
                 self.detected = True
                 self.categories = self.categories.union(provider_categories)
-                self.detected_by.append(provider)
-                self.provider_categories[provider.host] = list(provider_categories)
+                self.detected_by.append(result.provider)
+                self.provider_categories[result.provider.host] = list(provider_categories)
 
     def __repr__(self):
         detected = ' [DETECTED]' if self.detected else ''

@@ -6,10 +6,13 @@ from pycares import ares_query_a_result
 
 ffi = cffi.FFI()
 
+from provider_config import BASE_PROVIDERS_IP
 from config import RAW_PROVIDERS_IP, RAW_PROVIDERS_DOMAIN
 
 PROVIDER_COUNT_IP = len(RAW_PROVIDERS_IP)
 PROVIDER_COUNT_DOMAIN = len(RAW_PROVIDERS_DOMAIN)
+PROVIDER_COUNT_IP4 = len([p for p in BASE_PROVIDERS_IP if p.IP4])
+PROVIDER_COUNT_IP6 = len([p for p in BASE_PROVIDERS_IP if p.IP6])
 
 
 class AresResponse:
@@ -17,6 +20,7 @@ class AresResponse:
         # just some value as we need it to initialize ares_query_a_result
         self.ipaddr = ffi.new("char[]", '0.0.0.0'.encode('utf-8') + b'\0')
         self.ttl = 5
+        self.host = ''
 
 
 class MockedDNSResolver:
@@ -55,9 +59,9 @@ def test_check_ip(mocker):
         ip = '1.1.1.1'
         r = c.check(ip)
         assert r.request == ip
-        assert len(r.providers) == PROVIDER_COUNT_IP
+        assert len(r.providers) == PROVIDER_COUNT_IP4
         assert r.detected
-        assert str(r) == f'<DNSBLResult: {ip} [DETECTED] (2/{PROVIDER_COUNT_IP})>'
+        assert str(r) == f'<DNSBLResult: {ip} [DETECTED] (2/{PROVIDER_COUNT_IP4})>'
         assert [p.host for p in r.detected_by] == list(test_responses.keys())
         assert len(r.failed_providers) == 0
         assert len(r.general_errors) == 0
@@ -74,7 +78,7 @@ def test_check_domain(mocker):
     from checker import CheckDomain
 
     with CheckDomain() as c:
-        d = 'this-is-maleware.org'
+        d = 'this-is-malware.org'
         r = c.check(d)
         assert r.request == d
         assert len(r.providers) == PROVIDER_COUNT_DOMAIN
@@ -183,9 +187,9 @@ def test_check_ip6(mocker):
         ip = '2a01:4f8:c010:97b4::1'
         r = c.check(ip)
         assert r.request == ip
-        assert len(r.providers) == PROVIDER_COUNT_IP
+        assert len(r.providers) == PROVIDER_COUNT_IP6
         assert r.detected
-        assert str(r) == f'<DNSBLResult: {ip} [DETECTED] (2/{PROVIDER_COUNT_IP})>'
+        assert str(r) == f'<DNSBLResult: {ip} [DETECTED] (2/{PROVIDER_COUNT_IP6})>'
         assert [p.host for p in r.detected_by] == list(test_responses.keys())
         assert len(r.failed_providers) == 0
         assert len(r.general_errors) == 0
