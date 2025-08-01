@@ -4,6 +4,8 @@
 
 ### Features
 - Providers supplied via CLI-arguments are initialized with custom-config if it exists
+- Enable to query provider-nameserver directly (skipping default nameservers)
+- Enable user to pass list of nameservers to use
 
 ### Fixes
 - Handle invalid provider hostnames

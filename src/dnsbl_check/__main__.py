@@ -51,6 +51,14 @@ def main():
         '--details', action='store_true', default=False,
         help='If the result details should be added to the output',
     )
+    parser.add_argument(
+        '-n', '--nameservers', type=str, default='',
+        help='Comma-separated list of nameservers to query from',
+    )
+    parser.add_argument(
+        '-m', '--direct-nameservers', action='store_true', default=False,
+        help='If we should try to query the DNS-BL nameservers directly (if they have a valid NS-record)',
+    )
     args = parser.parse_args()
 
     if not args.json:
@@ -62,6 +70,9 @@ def main():
     add_providers = _init_providers(args.add_providers.split(','))
     only_providers = _init_providers(args.only_providers.split(','))
     skip_providers = args.skip_providers.split(',')
+    nameservers = args.nameservers.split(',')
+    if len(nameservers) == 1 and nameservers[0].strip() == '':
+        nameservers = None
 
     if args.ip is not None:
         if len(only_providers) > 0:
@@ -73,7 +84,12 @@ def main():
         if not args.json:
             print(f'Checking IP {args.ip} ..')
 
-        with CheckIP(providers=providers, skip_providers=skip_providers) as checker:
+        with CheckIP(
+            providers=providers,
+            skip_providers=skip_providers,
+            nameservers=nameservers,
+            direct_nameservers=args.direct_nameservers,
+        ) as checker:
             result = checker.check(args.ip)
 
     else:
@@ -86,7 +102,12 @@ def main():
         if not args.json:
             print(f'Checking Domain {args.domain} ..')
 
-        with CheckDomain(providers=providers, skip_providers=skip_providers) as checker:
+        with CheckDomain(
+            providers=providers,
+            skip_providers=skip_providers,
+            nameservers=nameservers,
+            direct_nameservers=args.direct_nameservers,
+        ) as checker:
             result = checker.check(args.domain)
 
     response = {

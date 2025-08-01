@@ -1,7 +1,10 @@
+import asyncio
+
+import aiodns
 from pycares import ares_query_a_result
 
 from utils import valid_domain
-from config import DNSBL_CATEGORY_UNKNOWN
+from config import DNSBL_CATEGORY_UNKNOWN, DEBUG
 
 
 class BaseProvider:
@@ -25,6 +28,9 @@ class BaseProvider:
         _, valid = valid_domain(self.host)
         if not valid:
             raise ValueError('Invalid provider hostname supplied')
+
+        self.ns_ips: None|list[str] = None
+        self.ns_error: bool = False
 
     def response_categories(self, response: (list[ares_query_a_result], ares_query_a_result)) -> set[str]:
         categories = set()
@@ -51,6 +57,51 @@ class BaseProvider:
 
     def __repr__(self):
         return f"<Provider: {self.host}>"
+
+    async def query_ns_ips(self, resolver):
+        if self.ns_ips is not None or self.ns_error:
+            # further queries in this session
+            return
+
+        try:
+            ns_dns = await resolver.query(self.host, 'NS')
+            if not isinstance(ns_dns, list):
+                ns_dns = [ns_dns]
+
+            ns_dns = [r.host for r in ns_dns]
+            if len(ns_dns) == 0:
+                raise aiodns.error.DNSError
+
+            if len(ns_dns) > 2:
+                ns_dns = ns_dns[0:2]
+
+            self.ns_ips = []
+            for dns in ns_dns:
+                ns_ips = await resolver.query(dns, 'A')
+                if not isinstance(ns_ips, list):
+                    ns_ips = [ns_ips]
+
+                ns_ips = [r.host for r in ns_ips]
+                self.ns_ips.extend(ns_ips)
+
+            if self.ns_ips is not None and len(self.ns_ips) == 0:
+                self.ns_ips = None
+
+        except aiodns.error.DNSError as e:
+            self.ns_error = True
+            if DEBUG:
+                print('NS QUERY ERROR', self.host, e)
+
+
+async def query_provider_nameservers(providers: list[BaseProvider], resolver):
+    """
+    Queries the nameservers for all providers (if they have a valid NS-record)
+    """
+    tasks = []
+    for provider in providers:
+        tasks.append(provider.query_ns_ips(resolver))
+
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 class Provider(BaseProvider):

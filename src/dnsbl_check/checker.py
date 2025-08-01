@@ -8,9 +8,9 @@ from json import dumps as json_dumps
 import aiodns
 
 from utils import valid_domain
-from provider import BaseProvider
 from config import DEFAULT_TIMEOUT, DEBUG
 from result import DNSBLResult, DNSBLResponse
+from provider import BaseProvider, query_provider_nameservers
 from provider_config import BASE_PROVIDERS_IP, BASE_PROVIDERS_DOMAIN
 
 if sys.platform == 'win32' and sys.version_info >= (3, 8):
@@ -19,11 +19,16 @@ if sys.platform == 'win32' and sys.version_info >= (3, 8):
 
 
 class BaseAsyncDNSBLChecker(abc.ABC):
+    """
+    Basic DNS-query handling
+    """
     def __init__(
-            self, timeout = DEFAULT_TIMEOUT,
+            self, timeout = DEFAULT_TIMEOUT, direct_nameservers: bool = False, nameservers: list[str] = None,
             providers: list[BaseProvider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
     ):
         self.providers: list[BaseProvider] = []
+        self.nameservers: list[str]|None = nameservers
+        self.direct_nameservers: bool = direct_nameservers
         self.skip_providers: list[str] = []
         if skip_providers is not None:
             self.skip_providers = skip_providers
@@ -39,7 +44,7 @@ class BaseAsyncDNSBLChecker(abc.ABC):
         self._debug_time = int(time())
 
     async def __aenter__(self):
-        self._resolver = aiodns.DNSResolver(timeout=self._timeout)
+        self._resolver = aiodns.DNSResolver(timeout=self._timeout, nameservers=self.nameservers)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -59,6 +64,9 @@ class BaseAsyncDNSBLChecker(abc.ABC):
         dnsbl_query = f"{self.prepare_query(request)}.{provider.host}"
 
         try:
+            if provider.ns_ips is not None:
+                self._resolver.nameservers = provider.ns_ips
+
             response = await self._resolver.query(dnsbl_query, 'A')
 
         except aiodns.error.DNSError as e:
@@ -76,6 +84,9 @@ class BaseAsyncDNSBLChecker(abc.ABC):
         return NotImplemented
 
     async def check(self, request: str) -> DNSBLResult:
+        if self.direct_nameservers:
+            await query_provider_nameservers(providers=self.providers, resolver=self._resolver)
+
         tasks = []
         for provider in self.providers:
             if provider.host in self.skip_providers:
@@ -113,6 +124,9 @@ class BaseAsyncDNSBLChecker(abc.ABC):
 
 
 class AsyncCheckIP(BaseAsyncDNSBLChecker):
+    """
+    Async equivalent to 'CheckIP'
+    """
     def prepare_query(self, request):
         ip = ipaddress.ip_address(request)
         if not ip.is_global:
@@ -130,6 +144,9 @@ class AsyncCheckIP(BaseAsyncDNSBLChecker):
 
 
 class AsyncCheckDomain(BaseAsyncDNSBLChecker):
+    """
+    Async equivalent to 'CheckDomain'
+    """
     def prepare_query(self, request):
         domain, valid = valid_domain(request)
         if not valid:
@@ -139,11 +156,20 @@ class AsyncCheckDomain(BaseAsyncDNSBLChecker):
 
 
 class BaseDNSBLChecker:
+    """
+    Synchronous usage to async calls
+    """
     def __init__(
-            self, async_checker: BaseAsyncDNSBLChecker,
+            self, async_checker: BaseAsyncDNSBLChecker, direct_nameservers: bool = False, nameservers: list[str] = None,
             providers: list[BaseProvider] = BASE_PROVIDERS_IP, timeout = DEFAULT_TIMEOUT, skip_providers: list[str] = None,
     ):
-        self._async_checker = async_checker(providers=providers, timeout=timeout, skip_providers=skip_providers)
+        self._async_checker = async_checker(
+            providers=providers,
+            timeout=timeout,
+            skip_providers=skip_providers,
+            nameservers=nameservers,
+            direct_nameservers=direct_nameservers,
+        )
 
     def __enter__(self):
         return self
@@ -160,8 +186,19 @@ class BaseDNSBLChecker:
 
 
 class CheckIP(BaseDNSBLChecker):
+    """
+    Check if an IP is listed on a blacklist
+    Some providers might be skipped, if we know they do not support IPv4 or IPv6 addresses
+
+    Arguments:
+        timeout: DNS-query timeout in seconds
+        nameservers: Nameservers to query from
+        direct_nameservers: If we should try to query the DNS-BL nameservers directly (if they have a valid NS-record)
+        providers: List of Providers to query from
+        skip_providers: List of Providers that are listed in 'providers' but should be skipped
+    """
     def __init__(
-            self, timeout = DEFAULT_TIMEOUT,
+            self, timeout = DEFAULT_TIMEOUT, direct_nameservers: bool = False, nameservers: list[str] = None,
             providers: list[BaseProvider] = BASE_PROVIDERS_IP, skip_providers: list[str] = None,
     ):
         BaseDNSBLChecker.__init__(
@@ -170,12 +207,24 @@ class CheckIP(BaseDNSBLChecker):
             providers=providers,
             skip_providers=skip_providers,
             timeout=timeout,
+            nameservers=nameservers,
+            direct_nameservers=direct_nameservers,
         )
 
 
 class CheckDomain(BaseDNSBLChecker):
+    """
+    Check if a domain is listed on a blacklist
+
+    Arguments:
+        timeout: DNS-query timeout in seconds
+        nameservers: Nameservers to query from
+        direct_nameservers: If we should try to query the DNS-BL nameservers directly (if they have a valid NS-record)
+        providers: List of Providers to query from
+        skip_providers: List of Providers that are listed in 'providers' but should be skipped
+    """
     def __init__(
-            self, timeout = DEFAULT_TIMEOUT,
+            self, timeout = DEFAULT_TIMEOUT, direct_nameservers: bool = False, nameservers: list[str] = None,
             providers: list[BaseProvider] = BASE_PROVIDERS_DOMAIN, skip_providers: list[str] = None,
     ):
         BaseDNSBLChecker.__init__(
@@ -184,4 +233,6 @@ class CheckDomain(BaseDNSBLChecker):
             providers=providers,
             skip_providers=skip_providers,
             timeout=timeout,
+            nameservers=nameservers,
+            direct_nameservers=direct_nameservers,
         )

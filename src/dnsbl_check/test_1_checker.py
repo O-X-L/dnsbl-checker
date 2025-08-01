@@ -24,8 +24,8 @@ class AresResponse:
 
 
 class MockedDNSResolver:
-    def __init__(self, timeout = 5, mock_responses: dict = None):
-        del timeout
+    def __init__(self, timeout = 5, mock_responses: dict = None, nameservers: list[str] = None):
+        del timeout, nameservers
         self._mock_responses = mock_responses
 
     async def query(self, query: str, rtype: str = 'A') -> ares_query_a_result:
@@ -203,3 +203,12 @@ def test_ipv6_converting():
 
     checker = AsyncCheckIP()
     assert checker.prepare_query('2600:2600::f03c:91ff:fe50:d2') == "2.d.0.0.0.5.e.f.f.f.1.9.c.3.0.f.0.0.0.0.0.0.0.0.0.0.6.2.0.0.6.2"
+
+
+def test_nameservers(mocker):
+    mocker.patch('aiodns.DNSResolver', MockedDNSResolver)
+
+    from checker import CheckIP
+
+    with CheckIP(nameservers=['1.1.1.1']) as c:
+        c.check('1.1.1.1')

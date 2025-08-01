@@ -56,3 +56,33 @@ def test_check_real_domain(domain):
         if r.detected:
             assert len(r.detected_by) > 0
             assert len(r.categories) > 0
+
+
+def test_check_real_nameservers():
+    from checker import CheckIP
+
+    with CheckIP(nameservers=['1.1.1.1']) as c:
+        ip = '1.1.1.1'
+        r = c.check(ip)
+        assert r.request == ip
+        assert len(r.providers) == PROVIDER_COUNT_IP4
+        assert len(r.general_errors) == 0
+        if r.detected:
+            assert len(r.detected_by) > 0
+            assert len(r.categories) > 0
+
+
+def test_check_real_provider_direct_nameservers():
+    from checker import CheckIP
+    from provider_config import ProviderOXLRisk
+
+    # NOTE: limiting providers as this takes a few seconds longer..
+    with CheckIP(providers=[ProviderOXLRisk()], direct_nameservers=True) as c:
+        ip = '1.1.1.1'
+        r = c.check(ip)
+        assert r.request == ip
+        assert len(r.providers) == 1
+        assert len(r.general_errors) == 0
+        if r.detected:
+            assert len(r.detected_by) > 0
+            assert len(r.categories) > 0

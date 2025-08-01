@@ -85,6 +85,11 @@ options:
                         Comma-separated list of DNS-BL provider-domains to query
                         (ignoring the built-in default providers)
   --details             If the result details should be added to the output
+  -n NAMESERVERS, --nameservers NAMESERVERS
+                        Comma-separated list of nameservers to query from
+  -m, --direct-nameservers
+                        If we should try to query the DNS-BL nameservers directly (if they
+                        have a valid NS-record)
 ```
 
 **Example:**
@@ -168,6 +173,16 @@ with CheckIP(providers=providers, skip_providers=['abuse.spfbl.net']) as checker
 
 print(result)
 # <DNSBLResult: 134.209.173.54 [DETECTED] (3/44)>
+
+# you might want to specify the nameservers to use
+with CheckIP(providers=providers, nameservers=['1.1.1.1', '8.8.8.8']) as checker:
+    result = checker.check('134.209.173.54')
+
+# sometimes you might want to try to query from the provider's nameservers directly
+#   this will skip your default nameservers but will take a little longer to initiate as we need to query the NS-records
+with CheckIP(providers=providers, direct_nameservers=True) as checker:
+    result = checker.check('134.209.173.54')
+
 ```
 
 ----

@@ -118,3 +118,15 @@ def test_provider_custom_categories(mocker):
         assert len(r.failed_providers) == 0
         assert len(r.general_errors) == 0
         assert list(r.categories)[0] == ProviderOXLRisk.RESPONSE_CATEGORIES[res_code]
+
+
+def test_provider_nameservers(mocker):
+    mocker.patch('aiodns.DNSResolver', MockedDNSResolver)
+
+    from checker import CheckIP
+    from provider_config import ProviderOXLRisk
+
+    with CheckIP(providers=[ProviderOXLRisk()], direct_nameservers=True) as c:
+        r = c.check('1.1.1.1')
+        assert len(r.providers) == 1
+        assert r.providers[0].ns_ips is not None or r.providers[0].ns_error
